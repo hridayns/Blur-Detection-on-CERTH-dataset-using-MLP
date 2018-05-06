@@ -5,9 +5,9 @@ import os.path as path
 import pandas as pd
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-
 #--------------------------------------------TRAIN SCRIPT-------------------------------------------------------------------------
 
 training_folder = os.path.join(dir_path,'CERTH_ImageBlurDataset','TrainingSet')
@@ -46,6 +46,9 @@ def load_train_images(folders):
 
 train_data_folders = [artificial_blur_path,natural_blur_path,undistorted_path]
 X_train,y_train = load_train_images(train_data_folders)
+
+scaler = StandardScaler()
+scaler.fit(X_train)
 
 #------------------------------------------------TEST SCRIPT----------------------------------------------------------
 
@@ -99,6 +102,9 @@ def load_test_images(folders):
 
 test_data_folders = [digital_blur_path,natural_blur_path]
 X_test,y_test = load_test_images(test_data_folders)
+
+X_train = scaler.transform(X_train)
+X_test = scaler.transform(X_test)
 
 mlp = MLPClassifier(hidden_layer_sizes=(13,13,13),max_iter=500)
 mlp.fit(X_train,y_train)
